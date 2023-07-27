@@ -341,6 +341,28 @@ func TestParse(t *testing.T) {
 				Node: &IdentifierNode{Value: "in_var"}},
 		},
 		{
+			"sort(Tickets, #1.Price < #2.Price)",
+			&BuiltinNode{
+				Name: "sort",
+				Arguments: []Node{
+					&IdentifierNode{Value: "Tickets"},
+					&ClosureNode{
+						Node: &BinaryNode{
+							Operator: "<",
+							Left: &MemberNode{
+								Node:     &PointerNode{N: 1},
+								Property: &StringNode{Value: "Price"},
+							},
+							Right: &MemberNode{
+								Node:     &PointerNode{N: 2},
+								Property: &StringNode{Value: "Price"},
+							},
+						},
+					},
+				},
+			},
+		},
+		{
 			"all(Tickets, #)",
 			&BuiltinNode{
 				Name: "all",

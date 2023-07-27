@@ -17,6 +17,7 @@ import (
 var predicates = map[string]struct {
 	arity int
 }{
+	"sort":   {2},
 	"all":    {2},
 	"none":   {2},
 	"any":    {2},
@@ -228,7 +229,6 @@ func (p *parser) parseConditional(node Node) Node {
 
 func (p *parser) parsePrimary() Node {
 	token := p.current
-
 	if token.Is(Operator) {
 		if op, ok := operator.Unary[token.Value]; ok {
 			p.next()
@@ -251,10 +251,21 @@ func (p *parser) parsePrimary() Node {
 
 	if p.depth > 0 {
 		if token.Is(Operator, "#") || token.Is(Operator, ".") {
+			node := &PointerNode{}
 			if token.Is(Operator, "#") {
 				p.next()
+				if p.current.Is(Number) {
+					number, err := strconv.Atoi(p.current.Value)
+					if err != nil {
+						p.error("invalid integer for numbered pointer: %v", err)
+					}
+
+					node.N = number
+
+					p.next()
+				}
 			}
-			node := &PointerNode{}
+
 			node.SetLocation(token.Location)
 			return p.parsePostfixExpression(node)
 		}

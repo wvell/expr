@@ -37,8 +37,13 @@ func root(l *lexer) stateFn {
 		l.emit(Bracket)
 	case strings.ContainsRune(")]}", r):
 		l.emit(Bracket)
-	case strings.ContainsRune("#,:;%+-^", r): // single rune operator
+	case strings.ContainsRune(",:;%+-^", r): // single rune operator
 		l.emit(Operator)
+	case strings.ContainsRune("#", r): // possible numbered pointer operator
+		l.emit(Operator)
+		if l.accept("0123456789") { // accept a numbered pointer operator like { #1.Len < #2.Len }
+			l.emit(Number)
+		}
 	case strings.ContainsRune("&!=*<>", r): // possible double rune operator
 		l.accept("&=*")
 		l.emit(Operator)

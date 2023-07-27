@@ -142,6 +142,8 @@ type ClosureNode struct {
 
 type PointerNode struct {
 	base
+	// N indicates the number of the pointer (for #2.Len the number will be 2).
+	N int
 }
 
 type ConditionalNode struct {
